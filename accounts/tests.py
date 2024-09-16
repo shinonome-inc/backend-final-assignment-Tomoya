@@ -246,8 +246,10 @@ class TestLoginView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(form.is_valid())
 
-        self.assertIn('正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。',
-                      form.errors["__all__"])
+        self.assertIn(
+            "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
+            form.errors["__all__"],
+        )
 
         # ログインしていないことを確認
         self.assertNotIn(SESSION_KEY, self.client.session)
@@ -264,7 +266,7 @@ class TestLoginView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(form.is_valid())
 
-        self.assertIn('このフィールドは必須です。', form.errors["password"])
+        self.assertIn("このフィールドは必須です。", form.errors["password"])
 
         # ログインしていないことを確認
         self.assertNotIn(SESSION_KEY, self.client.session)
