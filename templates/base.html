@@ -7,17 +7,14 @@
 </head>
 
 <body>
-  <!-- header  -->
   <header class="mb-3">
     <nav>
       <ul>
         {% if user.is_authenticated %}
-        <!-- ログインしているときのリンク -->
         <li><a href="{% url 'tweets:home'%}">Twitter Clone</a></li>
         <li><a href="{% url 'accounts:user_profile' username=user.username %}">Profile</a></li>
         <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
         {% else %}
-        <!-- ログインしていないときのリンク -->
         <li><a href="{% url 'welcome:welcome' %}">Twitter Clone</a></li>
         <li><a href="{% url 'accounts:signup' %}">Sign up</a></li>
         <li><a href="{% url 'accounts:login' %}">Log in</a></li>
@@ -25,14 +22,10 @@
       </ul>
     </nav>
   </header>
-  <!-- /header  -->
-
-  <!-- main  -->
   <main>
     {% block content %}
     {% endblock %}
   </main>
-  <!-- /main  -->
 </body>
 
 </html>

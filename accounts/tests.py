@@ -8,21 +8,14 @@ User = get_user_model()
 
 class TestSignupView(TestCase):
     def setUp(self):
-        # accounts/urls.pyのnameがsignupのurl取得
         self.url = reverse("accounts:signup")
-        # テストUserの作成
         self.user = User.objects.create_user(username="tester", password="testpassword")
 
-    # リクエストを送信する。
     def test_success_get(self):
-        # ユーザーがaccounts/signup/ のURLに訪れたという動作をしている
         response = self.client.get(self.url)
-        # assertEqual = 二つの値が一致するかどうか
         self.assertEqual(response.status_code, 200)
-        # assertTemplateUsed = レスポンスが指定されたテンプレートを使用して生成されているか
         self.assertTemplateUsed(response, "accounts/signup.html")
 
-    #  有効なemail, username, password1, password2のデータでリクエストを送信する。
     def test_success_post(self):
         valid_data = {
             "username": "testuser",
@@ -30,22 +23,17 @@ class TestSignupView(TestCase):
             "password1": "testpassword",
             "password2": "testpassword",
         }
-        # ユーザーがフォームにデータを打ち込んでユーザー登録ボタンを押した動作をしている
         response = self.client.post(self.url, valid_data)
 
-        # tweets/homeにリダイレクトしているか
         self.assertRedirects(
             response,
             reverse(settings.LOGIN_REDIRECT_URL),
             status_code=302,
             target_status_code=200,
         )
-        # データベースにvalid_data["username"]が登録されているか
         self.assertTrue(User.objects.filter(username=valid_data["username"]).exists())
-        # ログインしているかどうか
         self.assertIn(SESSION_KEY, self.client.session)
 
-    #  入力されてないデータでリクエストを送信する。
     def test_failure_post_with_empty_form(self):
         invalid_data = {
             "username": "",
@@ -54,7 +42,6 @@ class TestSignupView(TestCase):
             "password2": "",
         }
         response = self.client.post(self.url, invalid_data)
-        # response.context = responseで表示されているhtml等の情報がdict型ですべて入っている
         form = response.context["form"]
 
         self.assertEqual(response.status_code, 200)
@@ -65,7 +52,6 @@ class TestSignupView(TestCase):
         self.assertIn("このフィールドは必須です。", form.errors["password1"])
         self.assertIn("このフィールドは必須です。", form.errors["password2"])
 
-    #  usernameがブランク(空白)のデータでリクエストを送信する。
     def test_failure_post_with_empty_username(self):
         invalid_data = {
             "username": "",
@@ -81,7 +67,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["username"])
 
-    #  usernameがブランク(空白)のデータでリクエストを送信する。
     def test_failure_post_with_empty_email(self):
         invalid_data = {
             "username": "testuser",
@@ -97,7 +82,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["email"])
 
-    #  passwordがブランク(空白)のデータでリクエストを送信する。
     def test_failure_post_with_empty_password(self):
         invalid_data = {
             "username": "testuser",
@@ -114,7 +98,6 @@ class TestSignupView(TestCase):
         self.assertIn("このフィールドは必須です。", form.errors["password1"])
         self.assertIn("このフィールドは必須です。", form.errors["password2"])
 
-    # 既に存在するユーザーを登録するリクエストを送信する。
     def test_failure_post_with_duplicated_user(self):
         invalid_data = {
             "username": "tester",
@@ -129,7 +112,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("同じユーザー名が既に登録済みです。", form.errors["username"])
 
-    # emailが有効な形式でないリクエストを送信する。
     def test_failure_post_with_invalid_email(self):
         invalid_data = {
             "username": "testuser",
@@ -144,7 +126,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("有効なメールアドレスを入力してください。", form.errors["email"])
 
-    # passwordが短すぎる（8文字未満）データでリクエストを送信する。
     def test_failure_post_with_too_short_password(self):
         invalid_data = {
             "username": "testuser",
@@ -159,7 +140,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは短すぎます。最低 8 文字以上必要です。", form.errors["password2"])
 
-    # usernameに類似したpasswordでリクエストを送信する。
     def test_failure_post_with_password_similar_to_username(self):
         invalid_data = {
             "username": "testuser",
@@ -174,7 +154,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは ユーザー名 と似すぎています。", form.errors["password2"])
 
-    # 全て数字のpasswordでリクエストを送信する。
     def test_failure_post_with_only_numbers_password(self):
         invalid_data = {
             "username": "testuser",
@@ -189,7 +168,6 @@ class TestSignupView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは数字しか使われていません。", form.errors["password2"])
 
-    # password1とpassword2が異なるデータでリクエストを送信する。
     def test_failure_post_with_mismatch_password(self):
         invalid_data = {
             "username": "testuser",
@@ -207,14 +185,11 @@ class TestSignupView(TestCase):
 
 class TestLoginView(TestCase):
     def setUp(self):
-        # accounts/urls.pyのnameがloginのurl取得
         self.url = reverse("accounts:login")
         self.user = User.objects.create_user(username="testuser", password="testpassword")
 
     def test_success_get(self):
-        # ユーザーがaccounts/login/ のURLに訪れたという動作をしている
         response = self.client.get(self.url)
-        # assertEqual = 二つの値が一致するかどうか
         self.assertEqual(response.status_code, 200)
 
     def test_success_post(self):
@@ -222,17 +197,14 @@ class TestLoginView(TestCase):
             "username": "testuser",
             "password": "testpassword",
         }
-        # ユーザーがフォームにデータを打ち込んでユーザー登録ボタンを押した動作をしている
         response = self.client.post(self.url, valid_data)
 
-        # tweets/homeにリダイレクトしているか
         self.assertRedirects(
             response,
             reverse(settings.LOGIN_REDIRECT_URL),
             status_code=302,
             target_status_code=200,
         )
-        # ログインしているかどうか
         self.assertIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_not_exists_user(self):
@@ -251,7 +223,6 @@ class TestLoginView(TestCase):
             form.errors["__all__"],
         )
 
-        # ログインしていないことを確認
         self.assertNotIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_empty_password(self):
@@ -268,13 +239,11 @@ class TestLoginView(TestCase):
 
         self.assertIn("このフィールドは必須です。", form.errors["password"])
 
-        # ログインしていないことを確認
         self.assertNotIn(SESSION_KEY, self.client.session)
 
 
 class TestLogoutView(TestCase):
     def setUp(self):
-        # accounts/urls.pyのnameがsignupのurl取得
         self.url = reverse("accounts:logout")
         self.user = User.objects.create_user(username="testuser", password="testpassword")
 
