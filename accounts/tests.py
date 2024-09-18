@@ -276,6 +276,7 @@ class TestLogoutView(TestCase):
     def setUp(self):
         # accounts/urls.pyのnameがsignupのurl取得
         self.url = reverse("accounts:logout")
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
 
     def test_success_post(self):
         response = self.client.post(self.url)
