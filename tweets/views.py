@@ -13,8 +13,11 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = 'tweets'
     ordering = ['-created_at']
 
+    def get_queryset(self):
+        return Tweet.objects.select_related('user').order_by('-created_at')
 
-class TweetCreateView(CreateView):
+
+class TweetCreateView(LoginRequiredMixin, CreateView):
     model = Tweet
     form_class = TweetForm
     template_name = 'tweets/tweet_form.html'
