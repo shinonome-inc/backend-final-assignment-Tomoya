@@ -16,6 +16,9 @@
       <form action="{% url 'accounts:user_profile' username=user.username %}" method="get">
         <button type="submit">Profile</button>
       </form>
+      <form action="{% url 'tweets:create'%}" method="get">
+        <button type="submit">Tweet</button>
+      </form>
       <form action="{% url 'accounts:logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Log Out</button>
