@@ -4,4 +4,9 @@
 
 {% block content %}
 <h1>Homeです</h1>
+<ul>
+    {% for tweet in tweets %}
+    <li>{{ tweet.user.username }}: {{ tweet.content }} ({{ tweet.created_at}})</li>
+    {% endfor %}
+</ul>
 {% endblock %}
