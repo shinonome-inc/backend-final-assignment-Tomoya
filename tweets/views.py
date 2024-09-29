@@ -1,7 +1,7 @@
 # from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .forms import TweetForm
 from .models import Tweet
@@ -35,3 +35,12 @@ class TweetDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Tweet.objects.select_related('user')
+
+
+class TweetDeleteView(LoginRequiredMixin, DeleteView):
+    model = Tweet
+    template_name = 'tweets/tweet_delete.html'
+    success_url = reverse_lazy('tweets:home')
+
+    def get_queryset(self):
+        return Tweet.objects.filter(user=self.request.user)
