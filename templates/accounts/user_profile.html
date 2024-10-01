@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h1>profile</h1>
+{% if user_tweets %}
+<ul>
+    {% for user_tweet in user_tweets %}
+    <li><a href="{% url 'accounts:user_profile' username=user_tweet.user.username %}">{{user_tweet.user.username}}</a>
+        :{{ user_tweet.content }}
+        <a href="{% url 'tweets:detail' user_tweet.pk %}">詳細</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>このユーザーはまだ投稿していません。</p>
+{% endif %}
+{% endblock %}

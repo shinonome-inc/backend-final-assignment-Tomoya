@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Homeです</h1>
+<ul>
+    {% for tweet in tweets %}
+    <li><a href="{% url 'accounts:user_profile' username=tweet.user.username %}">{{tweet.user.username}}</a>
+        :{{ tweet.content }}
+        <a href="{% url 'tweets:detail' tweet.pk %}">詳細</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
