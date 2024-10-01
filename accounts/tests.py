@@ -276,6 +276,7 @@ class TestUserProfileView(TestCase):
         response = self.client.get(non_existent_user_url)
         self.assertEqual(response.status_code, 404)
 
+
 # class TestUserProfileEditView(TestCase):
 #     def test_success_get(self):
 
